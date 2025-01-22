@@ -23,7 +23,7 @@ class AidApplication(models.Model):
     ]
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    application_id = models.AutoField(primary_key=True)
+    application_id = models.CharField(max_length=10, primary_key=True, editable=False)
     bank_type = models.CharField(max_length=50)
     bank_account_number = models.CharField(max_length=20)
     parents_monthly_income = models.DecimalField(max_digits=10, decimal_places=2)
@@ -31,6 +31,18 @@ class AidApplication(models.Model):
     date_submitted = models.DateTimeField(auto_now_add=True)
     application_status = models.CharField(max_length=10, choices=APPLICATION_STATUS_CHOICES, default='pending')
     rejection_reason = models.TextField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        if not self.application_id:  # Only generate ID for new instances
+            last_application = AidApplication.objects.order_by('-application_id').first()
+            if last_application:
+                # Extract the numeric part and increment it
+                last_id = int(last_application.application_id[3:])
+                new_id = f"AID{last_id + 1:03d}"  # Format as AIDXXX
+            else:
+                new_id = "AID001"  # Start with AID001 if no applications exist
+            self.application_id = new_id
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Aid Application {self.application_id} by {self.user.username}"
