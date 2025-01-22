@@ -34,3 +34,9 @@ class AidApplication(models.Model):
 
     def __str__(self):
         return f"Aid Application {self.application_id} by {self.user.username}"
+    
+    def delete(self, *args, **kwargs):
+        # Delete the file if it exists
+        if self.support_document:
+            self.support_document.delete(save=False)
+        super().delete(*args, **kwargs)  # Call the parent delete method
