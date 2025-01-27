@@ -1,15 +1,22 @@
 # UAMS
 Software Engineering Project
 
-Admin
+Admin:
+
 username: admin
 password: 040409soo
 
-Student
+Student:
+
 username: 1211109617
 password: 040409soo
 
 username: 1211109189
+password: 040409soo
+
+Officer:
+
+username: officer
 password: 040409soo
 
 Any updates write here.
