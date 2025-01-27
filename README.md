@@ -1,6 +1,8 @@
 # UAMS
 Software Engineering Project
 
+Please pip install django and pip install weasyprint (generate pdf)
+
 Admin:
 
 username: admin
