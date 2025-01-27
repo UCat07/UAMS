@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ensure Disburse Fund - UAMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 100px;
+        }
+        .navbar {
+            background-color: #343a40;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .navbar .navbar-brand {
+            font-size: 1.5rem;
+        }
+        .navbar .d-flex {
+            margin-left: auto;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'officer_home' %}">UAMS Officer</a>
+            <div class="d-flex">
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h1 class="text-center mb-4">Ensure Disbursement for {{ fund.aid_application.user.profile.name }}</h1>
+
+                <!-- Display User Details -->
+                <form method="POST" action="{% url 'ensure_disburse_fund' fund.fund_id %}">
+                    {% csrf_token %}
+
+                    <!-- Student Name -->
+                    <div class="mb-3">
+                        <label for="studentName" class="form-label">Student Name</label>
+                        <input type="text" id="studentName" class="form-control" value="{{ fund.aid_application.user.profile.name }}" readonly>
+                    </div>
+
+                    <!-- Course -->
+                    <div class="mb-3">
+                        <label for="course" class="form-label">Course</label>
+                        <input type="text" id="course" class="form-control" value="{{ fund.aid_application.user.profile.course }}" readonly>
+                    </div>
+
+                    <!-- Bank Type -->
+                    <div class="mb-3">
+                        <label for="bankType" class="form-label">Bank Type</label>
+                        <input type="text" id="bankType" class="form-control" value="{{ fund.aid_application.bank_type }}" readonly>
+                    </div>
+
+                    <!-- Bank Account Number -->
+                    <div class="mb-3">
+                        <label for="accountNumber" class="form-label">Bank Account Number</label>
+                        <input type="text" id="accountNumber" class="form-control" value="{{ fund.aid_application.bank_account_number }}" readonly>
+                    </div>
+
+                    <!-- Parent's Monthly Income -->
+                    <div class="mb-3">
+                        <label for="monthlyIncome" class="form-label">Parent's Monthly Income</label>
+                        <input type="text" id="monthlyIncome" class="form-control" value="RM {{ fund.aid_application.parents_monthly_income }}" readonly>
+                    </div>
+
+                    <!-- Fund Status -->
+                    <div class="mb-3">
+                        <label for="status" class="form-label">Fund Status:</label>
+                        <select id="status" name="status" class="form-control" required>
+                            <option value="pending" {% if fund.status == "pending" %}selected{% endif %}>Pending</option>
+                            <option value="disbursed" {% if fund.status == "disbursed" %}selected{% endif %}>Disbursed</option>
+                            <option value="cancelled" {% if fund.status == "cancelled" %}selected{% endif %}>Cancelled</option>
+                            <option value="finished" {% if fund.status == "finished" %}selected{% endif %}>Finished</option>
+                        </select>
+                        {% if form.status.errors %}
+                            <div class="text-danger">
+                                {% for error in form.status.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Amount to Disburse -->
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount to Disburse (RM):</label>
+                        <input type="number" id="amount" name="amount" class="form-control" required min="0" value="{{ fund.amount|default:0 }}">
+                        {% if form.amount.errors %}
+                            <div class="text-danger">
+                                {% for error in form.amount.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Duration -->
+                    <div class="mb-3">
+                        <label for="duration_years" class="form-label">Duration (Years):</label>
+                        <input type="number" id="duration_years" name="duration_years" class="form-control" required min="0" value="{{ fund.duration_years|default:0 }}">
+                        {% if form.duration_years.errors %}
+                            <div class="text-danger">
+                                {% for error in form.duration_years.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Submit button -->
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success">Update Fund</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

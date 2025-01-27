@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disburse Fund - UAMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 100px;
+        }
+        .navbar {
+            background-color: #343a40;
+            height: 60px;  /* Fixed height for the navbar */
+            display: flex;
+            align-items: center; /* Vertically center the content */
+            position: fixed;  /* Fix the navbar at the top of the page */
+            top: 0;  /* Ensure it stays at the top */
+            left: 0;  /* Ensure it spans the full width of the page */
+            width: 100%;  /* Make it span the full width */
+            z-index: 1000;  /* Ensure the navbar is above other content */
+        }
+
+        .navbar .navbar-brand {
+            font-size: 1.5rem;
+        }
+
+        .navbar .d-flex {
+            margin-left: auto; /* Align the logout form to the right */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #343a40;">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'officer_home' %}">UAMS Officer</a>
+            <div class="d-flex">
+                <!-- Logout form -->
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page content -->
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h1 class="text-center mb-4">Disburse Fund for {{ fund.aid_application.user.profile.name }}</h1>
+
+                <!-- Display User Details -->
+                <form method="POST" action="{% url 'disburse_fund' fund.fund_id %}">
+                    {% csrf_token %}
+
+                    <!-- Student Name -->
+                    <div class="mb-3">
+                        <label for="studentName" class="form-label">Student Name</label>
+                        <input type="text" id="studentName" class="form-control" value="{{ fund.aid_application.user.profile.name }}" readonly>
+                    </div>
+
+                    <!-- Course -->
+                    <div class="mb-3">
+                        <label for="course" class="form-label">Course</label>
+                        <input type="text" id="course" class="form-control" value="{{ fund.aid_application.user.profile.course }}" readonly>
+                    </div>
+
+                    <!-- Bank Type -->
+                    <div class="mb-3">
+                        <label for="bankType" class="form-label">Bank Type</label>
+                        <input type="text" id="bankType" class="form-control" value="{{ fund.aid_application.bank_type }}" readonly>
+                    </div>
+
+                    <!-- Bank Account Number -->
+                    <div class="mb-3">
+                        <label for="accountNumber" class="form-label">Bank Account Number</label>
+                        <input type="text" id="accountNumber" class="form-control" value="{{ fund.aid_application.bank_account_number }}" readonly>
+                    </div>
+
+                    <!-- Parent's Monthly Income -->
+                    <div class="mb-3">
+                        <label for="monthlyIncome" class="form-label">Parent's Monthly Income</label>
+                        <input type="text" id="monthlyIncome" class="form-control" value="RM {{ fund.aid_application.parents_monthly_income }}" readonly>
+                    </div>
+
+                    <!-- Amount to Disburse -->
+                    <div class="mb-3">
+                        <label for="amount" class="form-label">Amount to Disburse (RM):</label>
+                        <input type="number" id="amount" name="amount" class="form-control" required min="0" value="{{ fund.amount|default:0 }}">
+                        {% if form.amount.errors %}
+                            <div class="text-danger">
+                                {% for error in form.amount.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Duration -->
+                    <div class="mb-3">
+                        <label for="duration_years" class="form-label">Duration (Years):</label>
+                        <input type="number" id="duration_years" name="duration_years" class="form-control" required min="0" value="{{ fund.duration_years|default:0 }}">
+                        {% if form.duration_years.errors %}
+                            <div class="text-danger">
+                                {% for error in form.duration_years.errors %}
+                                    <p>{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Submit button -->
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-success">Disburse Fund</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
