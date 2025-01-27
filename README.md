@@ -3,6 +3,8 @@ Software Engineering Project
 
 Please pip install django and pip install weasyprint (generate pdf)
 
+Remain task: Send email function
+
 Admin:
 
 username: admin
