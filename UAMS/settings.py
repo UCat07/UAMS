@@ -134,3 +134,13 @@ AUTH_PROFILE_MODULE = 'UAMS_App.Profile'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# Email Configuration (Example: Using Gmail SMTP)
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Use your email provider's SMTP server
+EMAIL_PORT = 587  # Use 465 for SSL, 587 for TLS
+EMAIL_USE_TLS = True  # Use SSL for 465
+EMAIL_HOST_USER = 'your-email@gmail.com'  # Replace with your email
+EMAIL_HOST_PASSWORD = 'your-email-password'  # Use an App Password if using Gmail
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
