@@ -7,6 +7,13 @@ from .models import Profile
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden
 from .models import Notification
+from django.shortcuts import render
+from .email_utils import send_notification_email
+from django.contrib import messages
+from django.shortcuts import render, get_object_or_404
+from .models import Application  # Your application model
+from .models import Disbursement  # Your financial aid disbursement model
+from .email_utils import send_notification_email  # Import the email function
 
 
 
@@ -472,3 +479,81 @@ def manage_notification(request):
         form = NotificationPreferenceForm(instance=notification_preference)
     
     return render(request, 'UAMS_App/manage_notification.html', {'form': form})
+
+def notify_student(request, student_email):
+    """Example view to send a notification email to students."""
+    subject = "Financial Aid Disbursement Update"
+    message = "Your financial aid has been successfully disbursed. Please check your account for details."
+
+    try:
+        send_notification_email(student_email, subject, message)
+        messages.success(request, "Notification email sent successfully!")
+    except Exception as e:
+        messages.error(request, f"Error sending email: {e}")
+
+    return render(request, "some_template.html")  # Replace with your actual template
+
+def review_application(request, application_id):
+    """Approve or reject student applications and notify them via email."""
+    application = get_object_or_404(Application, id=application_id)
+
+    if request.method == "POST":
+        decision = request.POST.get("decision")  # 'approve' or 'reject'
+        
+        if decision == "approve":
+            application.status = "Approved"
+            subject = "Your Financial Aid Application is Approved!"
+            message = f"Dear {application.student_name},\n\nYour financial aid application has been approved. You will receive disbursement details soon."
+        else:
+            application.status = "Rejected"
+            subject = "Your Financial Aid Application is Rejected"
+            message = f"Dear {application.student_name},\n\nWe regret to inform you that your financial aid application has been rejected. Please contact the financial aid office for further assistance."
+        
+        application.save()
+
+        # Send email notification
+        try:
+            send_notification_email(application.student_email, subject, message)
+            messages.success(request, "Application reviewed successfully, and student has been notified.")
+        except Exception as e:
+            messages.error(request, f"Error sending email: {e}")
+
+    return render(request, "review_application.html", {"application": application})
+
+def disburse_funds(request, disbursement_id):
+    """Disburse financial aid and notify students via email."""
+    disbursement = get_object_or_404(Disbursement, id=disbursement_id)
+
+    if request.method == "POST":
+        # Assume funds are disbursed successfully
+        disbursement.status = "Completed"
+        disbursement.save()
+
+        subject = "Your Financial Aid Has Been Disbursed!"
+        message = f"Dear {disbursement.student_name},\n\nWe are pleased to inform you that your approved financial aid amount of {disbursement.amount} has been disbursed to your account. Please check your bank for confirmation."
+
+        # Send email notification
+        try:
+            send_notification_email(disbursement.student_email, subject, message)
+            messages.success(request, "Funds disbursed successfully, and student has been notified.")
+        except Exception as e:
+            messages.error(request, f"Error sending email: {e}")
+
+    return render(request, "disbursement.html", {"disbursement": disbursement})
+
+def send_general_notification(request):
+    """Send a general notification email to all students."""
+    if request.method == "POST":
+        subject = request.POST.get("subject")
+        message = request.POST.get("message")
+        student_emails = ["student1@example.com", "student2@example.com"]  # Replace with actual student emails
+
+        for email in student_emails:
+            try:
+                send_notification_email(email, subject, message)
+            except Exception as e:
+                messages.error(request, f"Error sending email to {email}: {e}")
+
+        messages.success(request, "Notification emails sent successfully!")
+
+    return render(request, "send_notification.html")
