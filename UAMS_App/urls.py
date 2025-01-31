@@ -37,5 +37,7 @@ urlpatterns = [
     path('download_report/<str:fund_id>/', views.download_report, name='download_report'),
     path('manage_notification/', views.manage_notification, name='manage_notification'),
 
-
+    path("review_application/<str:application_id>/send_email/", views.review_application_email, name="review_application_email"),
+    path("disburse_funds/<str:fund_id>/send_email/", views.disburse_funds_email, name="disburse_funds_email"),
+    path("send_general_notification/", views.send_general_notification, name="send_general_notification"),
 ]
