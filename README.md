@@ -24,3 +24,8 @@ username: officer
 password: 040409soo
 
 Any updates write here.
+
+edit settings.py
+edit uams_app urls.py
+add email_utils.py
+edit views.py
