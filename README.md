@@ -3,8 +3,6 @@ Software Engineering Project
 
 Please pip install django and pip install weasyprint (generate pdf)
 
-Remain task: Send email function
-
 Admin:
 
 username: admin
@@ -16,16 +14,14 @@ username: 1211109617
 password: 040409soo
 
 username: 1211109189
-password: 040409soo
+password: bjy@2004
+
+username: 1211108953
+password: swc@2004
 
 Officer:
 
 username: officer
 password: 040409soo
 
-Any updates write here.
-
-edit settings.py
-edit uams_app urls.py
-add email_utils.py
-edit views.py
+Any updates:
