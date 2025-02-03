@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Notification Preferences - UAMS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding-top: 100px;
+        }
+        .navbar {
+            background-color: #343a40;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        .navbar .navbar-brand {
+            font-size: 1.5rem;
+        }
+        .navbar .d-flex {
+            margin-left: auto;
+        }
+
+        /* Center the form content */
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Adjust radio buttons size */
+        .form-check-input {
+            transform: scale(1.5); /* Makes radio buttons larger */
+        }
+
+        /* Style for the radio buttons and text */
+        .form-check {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+        }
+
+        .form-check-label {
+            margin-left: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* Only hide navbar and buttons when rendering for PDF */
+        body.pdf-rendered .navbar, 
+        body.pdf-rendered .button {
+            display: none;
+        }
+    </style>
+</head>
+<body class="{% if pdf_rendered %}pdf-rendered{% endif %}">
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'officer_home' %}">UAMS Officer</a>
+            <div class="d-flex">
+                <form method="POST" action="{% url 'logout' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Logout</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page content -->
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Manage Notification Preferences</h1>
+        <p class="text-center">Select the notification method for the system:</p>
+
+        <!-- Display success message -->
+        {% if messages %}
+            <div class="alert alert-success" role="alert">
+                {% for message in messages %}
+                    <p>{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <!-- Notification Preference Form -->
+        <form action="{% url 'manage_notification' %}" method="POST">
+            {% csrf_token %}
+            <div class="mb-4">
+                <!-- Radio buttons for notification preferences -->
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="preference" value="mail" {% if form.instance.preference == 'mail' %}checked{% endif %}>
+                    <label class="form-check-label" for="mail">
+                        Mail Only
+                    </label>
+                </div>
+                
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="preference" value="system" {% if form.instance.preference == 'system' %}checked{% endif %}>
+                    <label class="form-check-label" for="system">
+                        System Notifications Only
+                    </label>
+                </div>
+
+                <div class="form-check">
+                    <input class="form-check-input" type="radio" name="preference" value="both" {% if form.instance.preference == 'both' %}checked{% endif %}>
+                    <label class="form-check-label" for="both">
+                        Both Mail and System Notifications
+                    </label>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center mt-4 button">
+                <button type="submit" class="btn btn-primary">Save Preferences</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
