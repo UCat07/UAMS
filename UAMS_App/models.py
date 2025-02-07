@@ -6,6 +6,16 @@ from django.core.exceptions import ValidationError
 from UAMS_App.utils import send_notification_email
 
 
+class Officer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    phone = models.CharField(max_length=15, null=False, default="unknown")
+    name = models.CharField(max_length=255, null=False, default="unknown")  # Added name field for full name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.user.username
 
 
 class Profile(models.Model):
