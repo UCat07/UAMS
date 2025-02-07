@@ -1,8 +1,11 @@
 from django.contrib import admin
-from .models import Profile
+from .models import Profile, Officer
 from .models import AidApplication, Feedback, Notification, Fund
 
 admin.site.register(Profile)
+
+admin.site.register(Officer)
+
 
 class AidApplicationAdmin(admin.ModelAdmin):
     list_display = ('application_id', 'user', 'date_submitted', 'application_status')
